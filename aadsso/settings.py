@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'webUI'
+    'webUI',
+    'entra_auth'
 ]
 
 MIDDLEWARE = [
@@ -122,3 +123,16 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# TODO: Add the MICROSOFT authentication credentials
+ENTRA_CREDS = {
+    "app_id": "f191eba3-fbf1-4f14-b843-2d1d786bb4fc",
+    "app_secret": "Oj78Q~pX9qF0f4PlkxxdLIkayVzzmURQeOYuTduE",
+    "redirect": "http://localhost:8080/entra_auth/callback",
+    "scopes": ['User.Read'],
+    "authority": "https://login.microsoftonline.com/acda4430-1c93-4d80-bd91-2af796c0c185",
+    "valid_email_domains": ["chintannetsquare.onmicrosoft.com"],
+    "logout_uri": "http://localhost:8080/admin/logout"
+}
+LOGIN_URL = "/entra_auth/login"
+LOGIN_REDIRECT_URL = "/entra_access"

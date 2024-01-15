@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from entra_auth.auth.auth_decorators import microsoft_login_required
 
 
 def login_view(request):
@@ -23,4 +24,9 @@ def login_view(request):
 
 @login_required()
 def dashboard(request):
+    return render(request, 'dashboard.html')
+
+
+@microsoft_login_required(groups=("mssso",)) # must be group
+def entra_access(request):
     return render(request, 'dashboard.html')
