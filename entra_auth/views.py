@@ -8,14 +8,18 @@ from entra_auth.auth.auth_utils import (
     get_sign_in_flow,
     get_token_from_code,
     get_user,
+    remove_user_and_token,
 )
 
 
 def microsoft_login(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
     request.session["next_url"] = request.GET.get("next")
     print("login came")
     flow = get_sign_in_flow()
-    print(flow.get('auth_rui'))
+    print(flow.get('auth_uri'))
+    print(flow)
     try:
         request.session["auth_flow"] = flow
     except Exception as e:
@@ -25,6 +29,7 @@ def microsoft_login(request):
 
 
 def microsoft_logout(request):
+    remove_user_and_token(request)
     logout(request)
     return HttpResponseRedirect(get_logout_url())
 
