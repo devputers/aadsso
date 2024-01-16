@@ -1,10 +1,17 @@
+from functools import wraps
 from django.http import HttpResponseForbidden, HttpResponse
 from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
+from entra_auth.views import  microsoft_logout
 
 
 def is_member(user, group_names):
+    print(user)
+    print(user.groups)
+    print(group_names)
     return user.groups.filter(name__in=group_names).exists() if user else False
 
+    # experiment deleted
     # from django.contrib.auth.models import User
     # print(user)
     # print(user.groups)
@@ -41,3 +48,27 @@ def microsoft_login_required(groups=None):
             return view_func(request, *args, **kwargs)
         return _view_wrapper
     return _wrapper
+
+
+
+def login_required_with_AD(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+
+        ans=  is_member(
+            user=request.user,
+            group_names=('mssso',)
+        )
+        if ans:
+            if not request.user.is_authenticated:
+                return redirect("/entra_auth/login")
+        else:
+            if request.user.is_authenticated:
+                microsoft_logout(request)
+                return HttpResponseForbidden("Group Not exist. Not authorized.")
+      
+        # Call the original login_required decorator
+        print(request.get_full_path())
+        return login_required(view_func)(request, *args, **kwargs)
+
+    return _wrapped_view

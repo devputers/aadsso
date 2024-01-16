@@ -135,4 +135,5 @@ ENTRA_CREDS = {
     "logout_uri": "http://localhost:8080/admin/logout"
 }
 LOGIN_URL = "/entra_auth/login"
-LOGIN_REDIRECT_URL = "/entra_access"
+# LOGIN_REDIRECT_URL = "/entra_access"
+LOGIN_REDIRECT_URL = "/dashboard"
