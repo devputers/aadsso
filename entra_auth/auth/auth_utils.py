@@ -80,8 +80,7 @@ def remove_user_and_token(request):
 
 
 def get_logout_url():
-    str_ = "/oauth2/v2.0/logout" + "?post_logout_redirect_uri="
-    + ms_settings["logout_uri"]
+    str_ = "/oauth2/v2.0/logout" + "?post_logout_redirect_uri=" + ms_settings["logout_uri"]
     return ms_settings["authority"] + str_
 
 
