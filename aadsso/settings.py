@@ -75,11 +75,10 @@ WSGI_APPLICATION = 'aadsso.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+DDATABASES = {
+    "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR/"db.sqlite3"},
+    "dev": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR/"dev.sqlite3"},
+    "puters": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR/"puters.sqlite3"},
 }
 
 
@@ -126,7 +125,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # TODO: Add the MICROSOFT authentication credentials
 ENTRA_CREDS = {
-    "app_id": "f191eba3-fbf1-4f14-b843-2d1d786bb4fc",
+    "app_id": "f191eba3-fbf1-4f14-b843-",
     "app_secret": "Oj78Q~pX9qF0f4PlkxxdLIkayVzzmURQeOYuTduE",
     "redirect": "http://localhost:8080/entra_auth/callback",
     "scopes": ['User.Read'],
