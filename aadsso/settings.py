@@ -74,8 +74,7 @@ WSGI_APPLICATION = 'aadsso.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-DDATABASES = {
+DATABASES = {
     "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR/"db.sqlite3"},
     "dev": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR/"dev.sqlite3"},
     "puters": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR/"puters.sqlite3"},
