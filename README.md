@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-
 Setting Up a Virtual Environment
 
 Prerequisites
@@ -103,5 +101,3 @@ python manage.py migrate
     ```bash
     python manage.py migrate
     ```
-
->>>>>>> 6eb073e (Readme file added)
