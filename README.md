@@ -8,37 +8,61 @@ Prerequisites
 - **Python**: Version 3.10.12
   - To verify your version: python3 -V or python3 --version
 
+- **Postgres**: Version 14.10
+  - To verify your version: psql --version
+  - To check postgresql running : systemctl status postgresql
+
 Setup Instructions
 
 1. Clone this repository and switch to the relevant branch.
 
 2. Create a virtual environment:
 
-    
-bash
+    ```bash
     python3 -m venv _aadsso
-
+    ```
 
 3. Activate the virtual environment:
-
     
-bash
+    ```bash
     source _aadsso/bin/activate
-
+    ```
 
 4. Install the dependencies:
 
-    
-bash
-    pip install -r requirements.txt
+    ```bash
+    pip install -r reqs.txt
+    ```
 
-
-
-## Database
+## Database Default sqlite3
 Create a Database
 ```bash
-python manage.py migrate
+python manage.py makemigrations
+python manage.py migrate_schemas
 ```
+
+### Configure/Create Postgres Database
+
+1. to start postgres database/ service :
+    ```python
+    sudo service postgresql start    
+    ```
+2. Enter psql shell
+    ```python
+    sudo -u postgres psql    
+    ```
+3. Type the following code in the opened shell [ for create User and database ]:
+
+    ```bash
+    CREATE USER username WITH PASSWORD 'user_password';
+    CREATE DATABASE tenant_db;
+    GRANT ALL PRIVILEGES ON DATABASE tenant_db TO username;
+        # ALTER ROLE tenant_user SET client_encoding TO 'utf8';
+        # ALTER ROLE tenant_user SET default_transaction_isolation TO 'read committed';  
+    ```
+
+### For Public Auth
+
 1. Open a Python shell:
 
     ```bash
@@ -91,6 +115,7 @@ python manage.py migrate
 5. Use the provided email and password to log in. 
 
 ### Applying Database Migrations
+
 1. Run makemigrations to create migration files:
     
     ```bash
@@ -99,5 +124,95 @@ python manage.py migrate
 2. Apply migrations to update the database:
     
     ```bash
-    python manage.py migrate
+    python manage.py migrate_schemas
+    ```
+
+
+- make sure only use migrate_schemas when working with postgres database for multi tenant
+
+## Database Postgres Create Tenant / schemas
+
+1. Open a Python shell:
+
+    ```bash
+    python manage.py shell
+    ```
+
+2. Type the following code in the opened shell [ for create schemas ]:
+
+    ```python
+    from aadsso_app.models import Client, Domain
+
+    # Create public tenant in the opened shell:
+    tenant = Client(schema_name="public", name="Public")
+    tenant.save()
+    domain = Domain(domain="localhost", tenant=tenant, is_primary=True)
+    domain.save()
+
+    # Create login1 tenant in the opened shell:
+
+    tenant = Client(schema_name="login1", name="login one")
+    tenant.save()
+    domain = Domain(domain="login1.localhost", tenant=tenant, is_primary=True)
+    domain.save()
+
+    # Create login2 tenant in the opened shell:
+
+    tenant = Client(schema_name="login2", name="login two")
+    tenant.save()
+    domain = Domain(domain="login2.localhost", tenant=tenant, is_primary=True)
+    domain.save()
+    ```
+
+3. Type the following code in the opened shell [ for create User for schemas eg. login1 ]:
+
+    ```python
+    # Create user tenant1 in the opened shell:
+
+    # Assuming you have the User model and the 'login1' schema already created
+    # Switch to the 'login1' schema context
+    from aadsso_app.models import Client, Domain
+    from webUI import User
+    
+    login1 = Client.objects.get(schema_name='login1')
+    domain = Domain.objects.get(tenant=login1, is_primary=True)
+
+    # Activate the 'login1' schema
+    tenant.activate()
+
+    # Create a user in the 'login1' schema
+    user = User.objects.create(username='your_username', password='your_password')
+
+    # After adding data, switch back to the default schema context (optional)
+    tenant.deactivate()
+
+    # To verify that the user was created in the 'login1' schema
+    user_in_login1 = User.objects.using('login1').get(username='your_username')
+
+    ```
+
+4. Exit the shell.
+    ```python
+    exit() or Ctrl+D to exit
+    ```
+
+5. After configuring the necessary folders and configuration files, run:
+
+    ```bash
+    python manage.py runserver 0.0.0.0:8080
+    ```
+
+6. Use the provided email and password to log in. 
+
+### Applying Database Migrations
+
+1. Run makemigrations to create migration files:
+    
+    ```bash
+    python manage.py makemigrations
+    ```
+2. Apply migrations to update the database:
+    
+    ```bash
+    python manage.py migrate_schemas
     ```

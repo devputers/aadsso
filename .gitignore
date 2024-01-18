@@ -1,2 +1,9 @@
 _aa/*
+
+_ads
+
 **/__pycache__/*
+
+
+# Compiled Java class files
+*.class

@@ -7,26 +7,38 @@ from entra_auth.auth.auth_decorators import (
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from entra_auth.views import microsoft_logout
+from .models import User
 
 
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            login(request, user)
-            # return redirect('dashboard')  # Redirect to a dashboard page
-            # return redirect(request.GET.get('next', 'dashboard'))\
-            return render(request, 'dashboard.html', {'user':
-                                                  user})
-        else:
-            error_message = "Invalid username or password"
-            return render(request, 'login.html', {'error_message':
-                                                  error_message})
-    if request.user.is_authenticated:
-        return HttpResponseRedirect(settings.LOGIN_REDIRECT_URL)
+        # user = authenticate(request, username=username, password=password)
+        try:
+            user = User.objects.get(username=username)
+            if user is not None:
+                # login(request, user)
+                if user.password == password :
+                    request.session['user_login']=True
+                    user_data = {'id_user': user.id, 'name_user': user.username}
+                    user_data = request.session['user_data'] = user_data
+                    # return redirect('dashboard')  # Redirect to a dashboard page
+                    # return redirect(request.GET.get('next', 'dashboard'))
+                    return render(request, 'dashboard.html', {'user': user_data})
+                else:
+                    error_message = "Invalid username or password"
+                    return render(request, 'login.html', {'error_message':
+                                                    error_message})
+        except Exception:
+                return render(request, 'login.html', {'error_message': 'User does not exist'})
+        
+    # if request.user.is_authenticated:
+        
+    login_check = request.session.get('user_login')
+    user_data = request.session.get('user_data')
+    if login_check : 
+        return render(request, 'dashboard.html', {'user': user_data})
     return render(request, 'login.html')
 
 

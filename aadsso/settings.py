@@ -30,18 +30,24 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
-INSTALLED_APPS = [
+SHARED_APPS = [
+    'django_tenants',
+    'aadsso_app',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'webUI',
     'entra_auth'
 ]
 
+TENANT_APPS = ['webUI']
+
+INSTALLED_APPS = SHARED_APPS + [app for app in TENANT_APPS if app not in SHARED_APPS]
+
 MIDDLEWARE = [
+    'django_tenants.middleware.main.TenantMainMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -74,13 +80,26 @@ WSGI_APPLICATION = 'aadsso.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+# DATABASES = {
+#     "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR/"db.sqlite3"},
+#     "dev": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR/"dev.sqlite3"},
+#     "puters": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR/"puters.sqlite3"},
+# }
+
 DATABASES = {
-    "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR/"db.sqlite3"},
-    "dev": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR/"dev.sqlite3"},
-    "puters": {"ENGINE": "django.db.backends.sqlite3", "NAME": BASE_DIR/"puters.sqlite3"},
+    'default': {
+        'ENGINE': 'django_tenants.postgresql_backend',
+        'NAME': 'aadsso_db',
+        'USER': 'admin_postgres',
+        'PASSWORD': 'admin_postgres',
+        'HOST': 'localhost',  # Set to your PostgreSQL server's address
+        'PORT': '5432',      # Set to your PostgreSQL server's port
+    },
 }
 
-
+DATABASE_ROUTERS = (
+    'django_tenants.routers.TenantSyncRouter',
+)
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -121,6 +140,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+TENANT_MODEL = "aadsso_app.Client"
+
+TENANT_DOMAIN_MODEL = "aadsso_app.Domain"
+
+PUBLIC_SCHEMA_URLCONF = "aadsso_app.urls"
+
 
 # TODO: Add the MICROSOFT authentication credentials
 ENTRA_CREDS = {

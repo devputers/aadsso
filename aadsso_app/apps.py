@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class WebuiConfig(AppConfig):
+class AadssoAppConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'webUI'
+    name = 'aadsso_app'
