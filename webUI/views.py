@@ -11,6 +11,11 @@ from .models import User
 
 
 def login_view(request):
+    c_tenant= request.tenant
+    print("c_tenat",c_tenant)
+    # settings.ENTRA_CREDS["redirect"] = f"http://{c_tenant}.localhost:8080/entra_auth/callback"
+    # settings.ENTRA_CREDS["logout_uri"] = f"http://{c_tenant}.localhost:8080/admin/logout"
+        
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -67,3 +72,6 @@ def logout_view(request):
     microsoft_logout(request)
     logout(request)
     return redirect('login')
+
+# def logout_view_local(request):
+#     return redirect('login')

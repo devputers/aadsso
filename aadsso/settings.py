@@ -39,10 +39,14 @@ SHARED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'entra_auth'
+    'django_extensions',
 ]
 
-TENANT_APPS = ['webUI']
+TENANT_APPS = [
+    'webUI',
+    'entra_auth',
+
+    ]
 
 INSTALLED_APPS = SHARED_APPS + [app for app in TENANT_APPS if app not in SHARED_APPS]
 
@@ -147,16 +151,18 @@ TENANT_DOMAIN_MODEL = "aadsso_app.Domain"
 
 PUBLIC_SCHEMA_URLCONF = "aadsso_app.urls"
 
-
 # TODO: Add the MICROSOFT authentication credentials
 ENTRA_CREDS = {
-    "app_id": "f191eba3-fbf1-4f14-b843-",
+    "app_id": "f191eba3-fbf1-4f14-b843-2d1d786bb4fc",
     "app_secret": "Oj78Q~pX9qF0f4PlkxxdLIkayVzzmURQeOYuTduE",
     "redirect": "http://localhost:8080/entra_auth/callback",
     "scopes": ['User.Read'],
     "authority": "https://login.microsoftonline.com/acda4430-1c93-4d80-bd91-2af796c0c185",
     "valid_email_domains": ["chintannetsquare.onmicrosoft.com"],
-    "logout_uri": "http://localhost:8080/admin/logout"
+    "logout_uri": "http://localhost:8080/admin/logout",
+    
+    # "state" : "FeGJWDNZqxcadYpM",
+    # "session_state" : "e5cc2623-5ee2-474c-ad3d-a716c6b6cc69",
 }
 LOGIN_URL = "/entra_auth/login"
 # LOGIN_REDIRECT_URL = "/entra_access"

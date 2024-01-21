@@ -18,8 +18,8 @@ def microsoft_login(request):
     request.session["next_url"] = request.GET.get("next")
     print("login came")
     flow = get_sign_in_flow()
-    print(flow.get('auth_uri'))
-    print(flow)
+    print('auth uri',flow.get('auth_uri'))
+    print('flow',flow)
     try:
         request.session["auth_flow"] = flow
     except Exception as e:
@@ -36,7 +36,13 @@ def microsoft_logout(request):
 
 def callback(request):
     print("login came 1")
+    received_state = request.GET.get('state')
+    print("received_state",received_state)
+    # expected_state = request.session.get('oauth_state')
+    # print("expected_state",expected_state)
+    # request.session['state'] = received_state
     result = get_token_from_code(request)
+    print("result",result)
     print("login came 3")
     next_url = request.session.pop("next_url", None)
     print(result)

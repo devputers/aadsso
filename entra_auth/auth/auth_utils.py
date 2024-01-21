@@ -54,7 +54,9 @@ def get_token_from_code(request):
     cache = load_cache(request)
     auth_app = get_msal_app(cache)
     flow = request.session.pop("auth_flow", {})
+    print("get t auth_app result",auth_app,request.GET)
     result = auth_app.acquire_token_by_auth_code_flow(flow, request.GET)
+    print("get t result",auth_app,result)
     save_cache(request, cache)
     return result
 

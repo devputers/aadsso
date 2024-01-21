@@ -43,7 +43,13 @@ python manage.py migrate_schemas
 
 ### Configure/Create Postgres Database
 
-1. to start postgres database/ service :
+To install postgres database
+    ```python
+    sudo apt update
+    sudo apt install postgresql postgresql-contrib
+    ```
+
+1. To start postgres database/ service :
     ```python
     sudo service postgresql start    
     ```
@@ -54,15 +60,15 @@ python manage.py migrate_schemas
 3. Type the following code in the opened shell [ for create User and database ]:
 
     ```bash
-    CREATE USER username WITH PASSWORD 'user_password';
-    CREATE DATABASE tenant_db;
-    GRANT ALL PRIVILEGES ON DATABASE tenant_db TO username;
-        # ALTER ROLE tenant_user SET client_encoding TO 'utf8';
-        # ALTER ROLE tenant_user SET default_transaction_isolation TO 'read committed';  
+    CREATE USER username WITH PASSWORD 'user_password';  #(if not created)
+    CREATE DATABASE aadsso_db;
+    GRANT ALL PRIVILEGES ON DATABASE aadsso_db TO username;
+        # ALTER ROLE username SET client_encoding TO 'utf8';
+        # ALTER ROLE username SET default_transaction_isolation TO 'read committed';  
     ```
 
-### For Public Auth
-
+### For Public Database / Schemas and Defaul User , and Groups
+ 
 1. Open a Python shell:
 
     ```bash
@@ -111,6 +117,7 @@ python manage.py migrate_schemas
     ```bash
     python manage.py runserver 0.0.0.0:8080
     ```
+    - access in browser localhost:8080
 
 5. Use the provided email and password to log in. 
 
@@ -127,10 +134,9 @@ python manage.py migrate_schemas
     python manage.py migrate_schemas
     ```
 
-
 - make sure only use migrate_schemas when working with postgres database for multi tenant
 
-## Database Postgres Create Tenant / schemas
+## For Schemas / atabase Postgres Create Tenant / schemas and Custom User, Group
 
 1. Open a Python shell:
 
@@ -178,7 +184,7 @@ python manage.py migrate_schemas
     domain = Domain.objects.get(tenant=login1, is_primary=True)
 
     # Activate the 'login1' schema
-    tenant.activate()
+    login1.activate()
 
     # Create a user in the 'login1' schema
     user = User.objects.create(username='your_username', password='your_password')
@@ -190,6 +196,46 @@ python manage.py migrate_schemas
     user_in_login1 = User.objects.using('login1').get(username='your_username')
 
     ```
+
+4. Type the following code in the opened shell [ for create Groups and User, Groups for schemas eg. login1 ]:
+
+    ```python
+    # Create user tenant1 in the opened shell:
+
+    # Assuming you have the User model and the 'login1' schema already created
+    # Switch to the 'login1' schema context
+    from aadsso_app.models import Client, Domain
+    from webUI.models import User, Group, User_Groups
+    
+    login1 = Client.objects.get(schema_name='login1')
+    domain = Domain.objects.get(tenant=login1, is_primary=True)
+
+    # Activate the 'login1' schema
+    login1.activate()
+
+    # Create a user in the 'login1' schema
+    # Create User instances
+    user1 = User.objects.create(username='user1', password='password1')
+    user2 = User.objects.create(username='user2', password='password2')
+
+    # Create Group instances
+    group1 = Group.objects.create(name='mssso')
+    group2 = Group.objects.create(name='nomssso')
+
+    # Create User_Groups instances (associating users with groups)
+    User_Groups.objects.create(user=user1, group=group1)
+    User_Groups.objects.create(user=user1, group=group2)
+    User_Groups.objects.create(user=user2, group=group2)
+
+    # After adding data, switch back to the default schema context (optional)
+    tenant.deactivate()
+
+    # To verify that the user was created in the 'login1' schema
+    user_in_login1 = User.objects.using('login1').get(username='your_username')
+
+    ```
+
+    - **note** also able to add above data using admin login 
 
 4. Exit the shell.
     ```python
@@ -211,6 +257,7 @@ python manage.py migrate_schemas
     ```bash
     python manage.py makemigrations
     ```
+
 2. Apply migrations to update the database:
     
     ```bash

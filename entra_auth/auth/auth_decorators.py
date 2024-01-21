@@ -6,10 +6,33 @@ from entra_auth.views import  microsoft_logout
 
 
 def is_member(user, group_names):
-    print(user)
+    print("user oss", user)
     print(user.groups)
     print(group_names)
-    return user.groups.filter(name__in=group_names).exists() if user else False
+    #check user with costom user 
+    from webUI.models import User,Group,User_Groups
+    try:
+        user = User.objects.get(username=user)
+        group = Group.objects.get(name=group_names[0])  
+        print("in check",user,group)
+        # Check if the user is in the group
+        if User_Groups.objects.filter(user_id=user.id, group_id=group.id).exists():
+            print(f"{user} is in group {group_names[0]}")
+            return user
+        else:
+            print(f"{user} is not in group {group_names[0]}")
+            return False
+    except User.DoesNotExist:
+        print(f"User '{user}' not found")
+        return False
+    except Group.DoesNotExist:
+        print(f"Group '{group_names[0]}' not found")
+        return False
+    except Exception as e:
+        print("Error in check user",str(e))
+        return False
+    #
+    # return user.groups.filter(name__in=group_names).exists() if user else False
 
     # experiment deleted
     # from django.contrib.auth.models import User
@@ -59,6 +82,7 @@ def login_required_with_AD(view_func):
             user=request.user,
             group_names=('mssso',)
         )
+        print('ans_',ans)
         if ans:
             if not request.user.is_authenticated:
                 return redirect("/entra_auth/login")
