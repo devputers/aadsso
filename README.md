@@ -136,7 +136,7 @@ To install postgres database
 
 - make sure only use migrate_schemas when working with postgres database for multi tenant
 
-## For Schemas / atabase Postgres Create Tenant / schemas and Custom User, Group
+## For Schemas / Database Postgres Create Tenant / schemas and Custom User, Group
 
 1. Open a Python shell:
 
