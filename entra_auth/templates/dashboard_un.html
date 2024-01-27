@@ -1,0 +1,18 @@
+<!-- webUI/templates/login.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ request.tenant }}</title>
+  </head>
+  <body>
+    <h2>Client : {{ request.tenant }}</h2>
+    <p>User : {{ request.user }}</p>
+    <h2>Note : User is not authorized to access this Active Directory</h2>
+
+    <h3> <a href="{% url 'entra_auth_logout' %}"> Entry Auth Logout</a>  </h3>
+  </body>
+</html>

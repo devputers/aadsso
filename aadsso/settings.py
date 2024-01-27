@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+# settings.py
+# SECURE_SSL_REDIRECT = False
 
 # Application definition
 
@@ -160,9 +162,6 @@ ENTRA_CREDS = {
     "authority": "https://login.microsoftonline.com/acda4430-1c93-4d80-bd91-2af796c0c185",
     "valid_email_domains": ["chintannetsquare.onmicrosoft.com"],
     "logout_uri": "http://localhost:8080/admin/logout",
-    
-    # "state" : "FeGJWDNZqxcadYpM",
-    # "session_state" : "e5cc2623-5ee2-474c-ad3d-a716c6b6cc69",
 }
 LOGIN_URL = "/entra_auth/login"
 # LOGIN_REDIRECT_URL = "/entra_access"

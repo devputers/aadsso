@@ -67,7 +67,7 @@ To install postgres database
         # ALTER ROLE username SET default_transaction_isolation TO 'read committed';  
     ```
 
-### For Public Database / Schemas and Defaul User , and Groups
+### For Public Database / Schemas and Defaul User and Groups
  
 1. Open a Python shell:
 

@@ -1,6 +1,6 @@
 from functools import wraps
 from django.http import HttpResponseForbidden, HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from entra_auth.views import  microsoft_logout
 
@@ -83,13 +83,15 @@ def login_required_with_AD(view_func):
             group_names=('mssso',)
         )
         print('ans_',ans)
+
         if ans:
             if not request.user.is_authenticated:
                 return redirect("/entra_auth/login")
         else:
             if request.user.is_authenticated:
-                microsoft_logout(request)
-                return HttpResponseForbidden("Group Not exist. Not authorized.")
+                # microsoft_logout(request)
+                return render(request, 'dashboard_un.html')
+                # return HttpResponseForbidden("Group Not exist. Not authorized.")
       
         # Call the original login_required decorator
         print(request.get_full_path())
